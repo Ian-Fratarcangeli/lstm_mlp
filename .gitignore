@@ -28,7 +28,6 @@ venv/
 
 # Data and models and visuals
 src/
-*.txt
 *.pt
 *.pkl
 *.png
