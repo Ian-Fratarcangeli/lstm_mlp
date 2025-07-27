@@ -9,9 +9,6 @@ __pycache__/
 venv/
 .openbbenv/
 
-# Jupyter notebook temp files
-*.nbconvert.ipynb
-
 # Environment variable files
 .env
 
@@ -28,9 +25,6 @@ venv/
 
 # Data and models and visuals
 src/
-*.pt
-*.pkl
-*.png
 
 # OS files
 .DS_Store
