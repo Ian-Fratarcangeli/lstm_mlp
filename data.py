@@ -11,6 +11,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 import seaborn as sns
+import streamlit as st
 
 def set_fred_api_key(api_key: str):
     return Fred(api_key=api_key)
@@ -56,6 +57,7 @@ def get_price(symbol: str, date: str) -> float:
         print(f"No data found for {symbol} for {date}")
     return closing_price.iloc[0]
 
+@st.cache_data(ttl=3600)
 def get_historical_returns(symbol: str, start_date: str, end_date: str) -> pd.DataFrame:
     """
     Get historical log returns data over previous trading days for a given symbol and date period using yfinance.
