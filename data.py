@@ -57,7 +57,7 @@ def get_price(symbol: str, date: str) -> float:
         print(f"No data found for {symbol} for {date}")
     return closing_price.iloc[0]
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=86400)
 def get_historical_returns(symbol: str, start_date: str, end_date: str) -> pd.DataFrame:
     """
     Get historical log returns data over previous trading days for a given symbol and date period using yfinance.
@@ -71,6 +71,7 @@ def get_historical_returns(symbol: str, start_date: str, end_date: str) -> pd.Da
         pd.DataFrame: DataFrame with historical returns
     """
     try:
+        print(f"Downloading data for {symbol} at {time.strftime('%X')}")
         df = yf.download(symbol, start=start_date, end=end_date)
 
         #calculate log returns
