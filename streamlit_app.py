@@ -145,31 +145,33 @@ st.write("""Overall, I'm pleased with the performance of the LSTM-MLP model on o
 
 # --- Interactive Prediction ---
 st.header("Interactive Option Price Prediction")
-st.write("Input option parameters to get a model price prediction:")
+st.write("Input option parameters to get a model price prediction for a SPY call option:")
+error = 0
 with st.form("predict_form"):
-    Date = st.text_input("Quote Date of Contract (YYYY-MM-DD)")
+    Date = st.text_input("Quote Date of Contract (YYYY-MM-DD)", value = datetime.today().strftime("%Y-%m-%d"))
     # Validate input
     valid_date = None
     if Date:
         try:
             valid_date = datetime.strptime(Date, "%Y-%m-%d").date()
 
-            if valid_date > datetime.today():
+            if valid_date > datetime.today().date():
                 st.error("Quote dates cannot be in the future. Please try again.")
+                error +=1
             else: st.success(f"Valid date: {valid_date}")
         except ValueError:
             st.error("Invalid date format. Please enter date as YYYY-MM-DD.")
+            error +=1
+    else:
+        st.error("Need to enter a valid quote date.")
+        error +=1
 
-    # Use valid_date in your app if it's not None
-    if valid_date:
-        # Your logic with the valid date
-        pass
     T = st.number_input("Time to Maturity (T, in days)", min_value=0.01, max_value=3.0, value=0.5, step=0.01)
     r = st.number_input("Risk-Free Rate (r)", min_value=0.0, max_value=0.1, value=0.04, step=0.001)
     K = st.number_input("Strike Price (K)", min_value=1.0, max_value=1000.0, value=400.0, step=1.0)
     submitted = st.form_submit_button("Predict Option Price")
 
-if submitted:
+if submitted & (error != 1):
     try:
         # Scale features
         S = get_price(symbol="SPY", date=Date)
