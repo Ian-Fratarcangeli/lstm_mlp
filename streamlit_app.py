@@ -19,13 +19,13 @@ fred = set_fred_api_key(api_key=API_KEY)
 
 # --- Introduction ---
 st.header("Introduction")
-st.write("""This project is to test the LSTM-MLP framework against option data to gain a pattern recognition advantage over traditional methods of option pricing. 
-         Traditional methods like Black-Scholes will use an implied volatility to estimate the option value, which we can find with the market's price of the option.
+st.write("""The purpose of this project is to test the LSTM-MLP framework against option data to gain a pattern recognition advantage over traditional methods of option pricing. 
+         Traditional methods, like Black-Scholes, use an implied volatility to estimate the option value, which we can find with the market's price of the option.
           The Heston model instead implements volatility through a stochastic process of its own that is then fed into the asset price process, 
-         requiring some parameters like volatility of the volatility. Both of these methods can be seen in the Monte Carlo Simulation project, 
+         requiring some parameters like long-term volatility. Both of these methods can be seen in the Monte Carlo Simulation project, 
          and when you visit the dashboard you'll notice that the parameters I've mentioned are significant in each of their option pricing evaluations. 
-         It is very difficult to accurately estimate parameters that represent the asset price movements- 
-         stochastic processes are most common but the market changes constantly and can alter successful models to useless. 
+         It is very difficult to accurately estimate parameters that represent the asset price movements; 
+         stochastic processes are most common but market changes can render successful models to useless. 
          The LSTM-MLP model is meant to surpass traditional methods by learning important asset price metrics rather than parameterizing the distributions. 
          In doing so, my hope is that the LSTM will sift through the returns data and collect important information relevant to an option's future value 
          (possibly information applicable to the implied volatility). The MLP will then couple the LSTM information with important characteristics of the contract to 
@@ -37,10 +37,10 @@ train_df, val_df, test_df, returns_df, target_scaler, pt, feature_min_max = data
 st.header("Data")
 st.write("""
          Call option contracts on SPY are collected from OptionsDX as daily quotes between the dates of January 1st, 2021 and December 31st, 2023. The returns for each contract 
-         are fetched from Yahoo Finance and converted to logarithmic returns. Data for risk-free rates are collected by generating yield curves from yields of that time using the 
+         were fetched from Yahoo Finance and converted to logarithmic returns. Data for risk-free rates were collected by generating yield curves from yields of that time using the 
          Nelson-Siegel-Svensson model. Options with a time to maturity of less than 4 days or greater than two years, or with moneyness below 0.8 and above 2.0
-         are removed from the dataset to minimize outlier bias. All of the option features are transformed using a min-max scaler to avoid 
-         inappropiate model weights based on different value distributions.
+         were removed from the dataset to minimize outlier bias. All of the option features were transformed using a min-max scaler to avoid 
+         inappropriate model weights based on different value distributions.
          The option value (V) distribution is highly skewed towards low option price contracts, creating a target imbalance resulting in difficulty predicting 
          higher option prices. To combat this, the data is upsampled for higher option price contracts to balance price bins, and the target is given a 
          Yeo-Johnson transform to administer more normality in the distribution. Overall, approximately 1,750,000 contracts were gathered to be split for training, validation, and testing.
@@ -120,10 +120,10 @@ model = load_model(model_path, device)
 st.write(f"The testing phase was ran with {len(test_df)} option contracts. A mean absolute percent error (MAPE) of 9.02% was calculated for the evaluation.")
 st.write("""Even with the upsampling, the model still had issues with consistently underestimating higher priced option contracts. This problem is visualized in the
          percent error vs. V chart that illustrates a slight bend downwards in percent error as option price increases. Model error stayed relatively consistent
-         over maturity, minus some sparseness for contracts with quick maturities (less than a week). For contracts out of and at the money (M<=1), the error shows lots
-         of variablity, which may be because these contract prices are very cheap meaning small misses in estimates result in large percent errors. The in the money (M>1)
-         contracts exhibit the downward bend similar to the first visual, which I'm assuming also had to do with the lack of data for call options far in the money (and therefore
-         high in price).   
+         over maturity, minus some sparseness for contracts with quick maturities (less than a week). For contracts out of and at the money (M<=1), the error shows a lot
+         of variablity because these contract prices are very cheap, therefore small misses in estimates result in large percent errors. The in the money (M>1)
+         contracts exhibit the downward bend similar to the first visual, which I'm assuming also had to do with the lack of data for call options far in the money, and therefore
+         high in price.   
 """)
 st.subheader("Model Evaluation Visuals")
 col1, col2, col3 = st.columns(3)
@@ -135,12 +135,12 @@ with col3:
     st.image("inference_plots/perror_moneyness.png", caption="Model percent over Moneyness (M)", use_container_width=True)
 
 st.header("Discussion")
-st.write("""Overall, I'm pleased with the performance of the LSTM-MLP model on option prices. The data I gathered for call options over time was free, so the quality
-         of this data may have been to blame for many of the training and evaluation issues that presented themselves. The training was time-consuming and resulted in 
-         computation strain for my computer, which was why I chose not to go over two million option contracts. Nonetheless, the model produced a decent MAPE and was able
+st.write("""Overall, I'm pleased with the performance of the LSTM-MLP model on option prices. Because the data I gathered for call options over time was free, the quality
+         of this data may have contributed to many of the issues present in training and evaluation. I chose not to go over two million option contracts because the training was time-consuming and resulted in 
+         computation strain for my computer. Nonetheless, the model produced a strong MAPE and was able
          to learn from financial data that is volatile and skewed. Below I have loaded in the trained model for an interactive dashboard where you can make inputs and ask for an 
-         estimated call option value. Keep in mind, the data I used to train the model stopped at the end of 2023, so there could be market changes from then to today that 
-         impact today's market prices that the model has not learned (hopefully it can extrapolate).
+         estimated call option value. It is important to keep in mind that the data I used to train the model stopped at the end of 2023; the model has not learned market changes since then that 
+         might impact today's market prices, but hopefully it can extrapolate.
 """)
 
 # --- Interactive Prediction ---
